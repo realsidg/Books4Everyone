@@ -1,2 +1,3 @@
-# project1
-books4everyone
+# Project 1
+
+Web Programming with Python and JavaScript
