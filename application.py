@@ -1,7 +1,7 @@
 import os
 import requests
 
-from flask import Flask, session, render_template
+from flask import Flask, session, render_template, request
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -25,6 +25,15 @@ db = scoped_session(sessionmaker(bind=engine))
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route("/books")
+def books():
+    data=""
+    isbn=request.args.get('isbn')
+    if isbn is not None:
+        res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn})
+        data=res.json()
+    return render_template("book_details.html", data=data)
 
 @app.route("/book/<string:isbn>")
 def book(isbn):

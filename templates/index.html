@@ -13,18 +13,14 @@
 	<div class="container ">
 	  <div class="col-xl-12 text-center"><h1>Books4everyone</h1></div>
 	  <div class="col-xl-12 text-center"> <br>
-			<form method="GET">
+			<form action="{{url_for('books')}}" method="GET">
 				Enter ISBN:
-			  <input type="text" name="isbn">&nbsp;&nbsp;&nbsp;
+			  <input type="text" name="isbn" id="isbn">&nbsp;&nbsp;&nbsp;
 				<button type="submit">Submit</button>
 			</form>
 		</div>
 		<div class="col-xl-12 text-center"> <br>
-			{% if isbn is not None %}
-				{% import requests%}
-				{% res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn}) %}
-				{{res.json()}}
-			{% end if %}
+			{{data}}
 	  </div>
 	  </div>  
 	  
