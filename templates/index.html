@@ -7,30 +7,36 @@
     <title>Untitled Document</title>
     <!-- Bootstrap -->
 	<link href="css/bootstrap-4.0.0.css" rel="stylesheet">
-	
-  </head>
-  <body class="bg-dark text-white">
-	<div class="container ">
-	  <div class="col-xl-12 text-center"><h1>Books4everyone</h1></div>
-	  <div class="col-xl-12 text-center"> <br>
-			<form method="GET">
-				Enter ISBN:
-			  <input type="text" name="isbn">&nbsp;&nbsp;&nbsp;
-				<button type="submit">Submit</button>
-			</form>
-		</div>
-		<div class="col-xl-12 text-center"> <br>
-			{% if isbn is not None %}
-				{% import requests%}
-				{% res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn}) %}
-				{{res.json()}}
-			{% end if %}
+	<link href="css/index.css" rel="stylesheet" type="text/css">
+  </head>	
+  <body>
+	  <nav class="navbar navbar-expand-lg navbar-light"><a class="navbar-brand" href="#">Book4Everyone</a>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active"> </li>
+      <li class="nav-item"> </li>
+      <li class="nav-item"> </li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li class="nav-item"><a class="nav-link" href="#"> Sign Up</a></li>
+      <li class="nav-item"><a class="nav-link" href="#"> Login</a></li>
+    </ul>
+  </div>
+</nav>
+	  <br><br>
+	  <div class="container">
+	  	<div class="col-xl-12 text-center text-white"><br><br><h1>Welcome, Which book do you want to find?</h1><br><br></div>
+		<div class="col-xl-6 offset-3 text-center">
+		  <form>
+			<input type="text" class="search" name="query">&nbsp;&nbsp;
+				<button class="bg-light">Submit</button>
+		  </form>
+		  </div>		  
 	  </div>
-	  </div>  
 	  
 	  
-	<script src="js/jquery-3.2.1.min.js"></script>
+  <script src="js/jquery-3.2.1.min.js"></script>
 	<script src="js/popper.min.js"></script> 
-  <script src="js/bootstrap-4.0.0.js"></script>
+	<script src="js/bootstrap-4.0.0.js"></script>
   </body>
 </html>
