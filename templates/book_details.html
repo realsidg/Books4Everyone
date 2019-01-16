@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="container text-white">
+    <h1>Details:</h1>
+    {% for i in data['books'][0] %}
+        {{i}}: 
+        {{data['books'][0][i]}}<br>
+    {% endfor %}
+</div>
+{% endblock %}

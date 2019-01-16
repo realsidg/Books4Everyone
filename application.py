@@ -29,7 +29,7 @@ def index():
 @app.route("/books")
 def books():
     data=""
-    isbn=request.args.get('isbn')
+    isbn=request.args.get('query')
     if isbn is not None:
         res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn})
         data=res.json()

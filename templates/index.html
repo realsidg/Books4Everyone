@@ -1,10 +1,12 @@
 {% extends "layout.html" %}
-<div class="container">
-	  	<div class="col-xl-12 text-center text-white"><br><br><h1>Welcome, Which book do you want to find?</h1><br><br></div>
-		<div class="col-xl-6 offset-3 text-center">
-		  <form>
-			<input type="text" class="search" name="query">&nbsp;&nbsp;
-				<button class="bg-light">Submit</button>
-		  </form>
-		  </div>		  
-	  </div>
+{% block body %}
+	<div class="container">
+				<div class="col-xl-12 text-center text-white"><br><br><h1>Welcome, Which book do you want to find?</h1><br><br></div>
+			<div class="col-xl-6 offset-3 text-center">
+				<form action="{{ url_for('books') }}">
+				<input type="text" class="search" name="query">&nbsp;&nbsp;
+					<button class="bg-light">Submit</button>
+				</form>
+				</div>		  
+			</div>
+{% endblock %}
