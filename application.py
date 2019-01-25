@@ -87,6 +87,18 @@ def signup():
     rang = "green" if check else "red"
     return render_template("signup.html",message=message,rang=rang)
 
-@app.route("/login")
+@app.route("/login",methods=['GET','POST'])
 def login():
-    return render_template("login.html")
+    check=False
+    if request.method == "POST" :
+        for usr in db.execute("SELECT username from USERS").fetchall():
+            if re.match(usr[0],request.form.get('username'),re.I):
+                check=True
+
+        if check:
+            check=False
+            for usr in db.execute("SELECT passw from USERS").fetchall():
+                if re.match(usr[0], hashlib.md5(request.form.get('password').encode()).hexdigest()):
+                    check=True
+
+    return render_template("login.html", check=check)
