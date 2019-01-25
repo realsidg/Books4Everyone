@@ -6,6 +6,21 @@
     <h6>Author {{book[2]}}</h6>
     <h6>ISBN: {{book[0]}}</h6>
     <h6>Year: {{book[3]}}</h6>
+</div>
 
+<div class="container">
+    <center><h4>Reviews:</h4></center>
+    <div class="col-12"
+    <form action={{ url_for("book",isbn=book[0]) }} type="POST" class="form">
+        <div class="form-group">
+        <label for="review" class="text-info">Write a Review:</label><br>
+            <textarea name="review" style="width:500px;height:150px;"></textarea> <br>
+            <input type="submit" name="submit" class="btn btn-info btn-md" value="submit"><br><br>
+    </form>
+    <div class="col-12 bg-light">
+    Username:<br>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    <br>
+    </div>
 </div>
 {% endblock %}
