@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{%block body%}
+	{% for name in b %}
+	<div class="container" style="padding: 10px">
+		<div class="row" style="background: rgba(138, 114, 61, 0.2);">
+			<div class="col-3">
+				{{name}}
+			</div>
+		</div>
+	</div>
+	{% endfor %}
+{% endblock %}
