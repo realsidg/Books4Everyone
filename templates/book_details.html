@@ -1,10 +1,11 @@
 {% extends "layout.html" %}
 {% block body %}
-<div class="container text-white">
-    <h1>Details:</h1>
-    {% for i in data['books'][0] %}
-        {{i}}: 
-        {{data['books'][0][i]}}<br>
-    {% endfor %}
+<div class="container" style="background: rgba(138, 114, 61, 0.2); margin-top:20px;">
+    <h3>{{book[1]}}</h3>
+    <br>
+    <h6>Author {{book[2]}}</h6>
+    <h6>ISBN: {{book[0]}}</h6>
+    <h6>Year: {{book[3]}}</h6>
+
 </div>
 {% endblock %}

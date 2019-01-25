@@ -30,7 +30,7 @@ def Validate(name, email, user, passw, repeatpass):
         check=False
         message="Invalid Name"
         
-    if check and not (re.match("^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$",email)):
+    if check and not (re.match(r"^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$",email)):
         check=False
         message="Invalid Email"
     else:
@@ -68,14 +68,18 @@ def Validate(name, email, user, passw, repeatpass):
 def index():
     return render_template("index.html")
 
-@app.route("/books")
-def books():
-    data=""
-    isbn=request.args.get('query')
-    if isbn is not None:
-        res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn})
-        data=res.json()
-    return render_template("book_details.html", data=data)
+@app.route("/results")
+def results():
+    data=[]
+    query=request.args.get('q')
+    for bk in db.execute("SELECT * from BOOKS").fetchall():
+
+            if re.match("^.*"+query+".*$",bk[0] if bk[0][-1]!='X' else bk[0][:-1],re.I) or re.match("^.*"+query+".*$",bk[1],re.I) or re.match("^.*"+query+".*$",bk[2],re.I) or re.match("^.*"+query+".*$",str(bk[3]),re.I):
+                data.append(bk)
+    # if isbn is not None:
+    #     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn})
+    #     data=res.json()
+    return render_template("result.html", data=data)
 
 @app.route("/signup",methods=['POST','GET'])
 def signup():
@@ -102,3 +106,12 @@ def login():
                     check=True
 
     return render_template("login.html", check=check)
+
+@app.route("/book/<string:isbn>")
+def book(isbn):
+    book=[]
+    # if isbn[-1]=="X": isbn=isbn[:-1]
+    books= db.execute("SELECT * from BOOKS").fetchall()
+    for bk in books:
+        if bk[0] ==isbn:
+            return render_template("book_details.html",book=bk)
