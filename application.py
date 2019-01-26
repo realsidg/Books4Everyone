@@ -18,7 +18,6 @@ if not os.getenv("DATABASE_URL"):
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
-
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
@@ -66,20 +65,31 @@ def Validate(name, email, user, passw, repeatpass):
 
 @app.route("/")
 def index():
+    if request.method == "GET" :
+        if request.args.get('logout'):
+            session.pop('username', None)
+            session.pop('logged_in', False)
+            session.pop('user', None)
+            session.pop('user_no', None)
+            
     return render_template("index.html")
 
 @app.route("/results")
 def results():
     data=[]
     query=request.args.get('q')
-    for bk in db.execute("SELECT * from BOOKS").fetchall():
+    if query:
+        regex=".*"+query+".*"
+        data = db.execute("SELECT * from BOOKS where (title ~* :rgx) or (author ~* :rgx) or (isbn ~* :rgx)  or (CAST(year AS TEXT) ~* :rgx);",{'rgx':regex}).fetchall()
+    
+        # if isbn is not None:
+        #     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn})
+        #     data=res.json()
+        return render_template("result.html", data=data, error=False)
+    else:
+        return render_template("result.html", data=data, error=True)
 
-            if re.match("^.*"+query+".*$",bk[0] if bk[0][-1]!='X' else bk[0][:-1],re.I) or re.match("^.*"+query+".*$",bk[1],re.I) or re.match("^.*"+query+".*$",bk[2],re.I) or re.match("^.*"+query+".*$",str(bk[3]),re.I):
-                data.append(bk)
-    # if isbn is not None:
-    #     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn})
-    #     data=res.json()
-    return render_template("result.html", data=data)
+
 
 @app.route("/signup",methods=['POST','GET'])
 def signup():
@@ -93,23 +103,32 @@ def signup():
 
 @app.route("/login",methods=['GET','POST'])
 def login():
-    check=False
+    if request.method == "GET" :
+        if request.args.get('logout'):
+            session["logged_in"]=False
+
     if request.method == "POST" :
-        for usr in db.execute("SELECT username from USERS").fetchall():
-            if re.match(usr[0],request.form.get('username'),re.I):
-                check=True
+        for usr in db.execute("SELECT * from USERS where username = :usr",{"usr":request.form.get("username")}).fetchall():
+            if re.match(usr[4], hashlib.md5(request.form.get('password').encode()).hexdigest()):
+                session["logged_in"]=True
+                session["username"]=usr[3]
+                session["user"]=usr[1]
+                session["user_no"]=usr[0]
+                return render_template("index.html")
 
-        if check:
-            check=False
-            for usr in db.execute("SELECT passw from USERS").fetchall():
-                if re.match(usr[0], hashlib.md5(request.form.get('password').encode()).hexdigest()):
-                    check=True
-
-    return render_template("login.html", check=check)
+    return render_template("login.html")
 
 @app.route("/book/<string:isbn>",methods=["GET","POST"])
 def book(isbn):
-    book=[]
-    # if isbn[-1]=="X": isbn=isbn[:-1]
+    book=usrev=[]
     book= db.execute("SELECT * from BOOKS WHERE ISBN = :isbn",{'isbn':isbn}).fetchall()[0]
-    return render_template("book_details.html",book=book)
+    
+    if "logged_in" in session:
+        if session["logged_in"]:
+            usrev = db.execute("SELECT username, rating, review from users u, reviews r where isbn = :i and u.id = r.user_id and u.id = :u",{'i':isbn,'u':session["user_no"]}).fetchall()
+            if request.method=="POST" and usrev==[]:
+                db.execute("INSERT INTO REVIEWS (isbn, user_id, review, rating) VALUES (:i, :u, :rev, :rate)",
+                            {'i':book[0], 'u':session["user_no"], 'rev':request.form.get("review"), 'rate':request.form.get("rating")})
+                db.commit()
+    rev = db.execute("SELECT username, rating, review from users u, reviews r where isbn = :i and u.id = r.user_id",{'i':isbn}).fetchall()
+    return render_template("book_details.html",book=book,rev=rev,usrev=usrev)
