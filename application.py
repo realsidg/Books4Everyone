@@ -107,11 +107,9 @@ def login():
 
     return render_template("login.html", check=check)
 
-@app.route("/book/<string:isbn>")
+@app.route("/book/<string:isbn>",methods=["GET","POST"])
 def book(isbn):
     book=[]
     # if isbn[-1]=="X": isbn=isbn[:-1]
-    books= db.execute("SELECT * from BOOKS").fetchall()
-    for bk in books:
-        if bk[0] ==isbn:
-            return render_template("book_details.html",book=bk)
+    book= db.execute("SELECT * from BOOKS WHERE ISBN = :isbn",{'isbn':isbn}).fetchall()[0]
+    return render_template("book_details.html",book=book)
