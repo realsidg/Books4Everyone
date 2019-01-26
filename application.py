@@ -81,7 +81,6 @@ def results():
     if query:
         regex=".*"+query+".*"
         data = db.execute("SELECT * from BOOKS where (title ~* :rgx) or (author ~* :rgx) or (isbn ~* :rgx)  or (CAST(year AS TEXT) ~* :rgx);",{'rgx':regex}).fetchall()
-    
         # if isbn is not None:
         #     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn})
         #     data=res.json()
@@ -122,7 +121,7 @@ def login():
 def book(isbn):
     book=usrev=[]
     book= db.execute("SELECT * from BOOKS WHERE ISBN = :isbn",{'isbn':isbn}).fetchall()[0]
-    
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn})
     if "logged_in" in session:
         if session["logged_in"]:
             usrev = db.execute("SELECT username, rating, review from users u, reviews r where isbn = :i and u.id = r.user_id and u.id = :u",{'i':isbn,'u':session["user_no"]}).fetchall()
@@ -131,4 +130,4 @@ def book(isbn):
                             {'i':book[0], 'u':session["user_no"], 'rev':request.form.get("review"), 'rate':request.form.get("rating")})
                 db.commit()
     rev = db.execute("SELECT username, rating, review from users u, reviews r where isbn = :i and u.id = r.user_id",{'i':isbn}).fetchall()
-    return render_template("book_details.html",book=book,rev=rev,usrev=usrev)
+    return render_template("book_details.html",book=book,rev=rev,usrev=usrev,res=res)

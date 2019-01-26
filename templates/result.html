@@ -10,7 +10,7 @@
 		No results found
 	{% else %}
 			<div class="row bg-light text-dark">
-				<div class="col-3">
+				<div class="col-2">
 					ISBN
 				</div>
 				<div class="col-3">
@@ -19,25 +19,25 @@
 				<div class="col-3">
 					Author
 				</div>
-				<div class="col-3">
+				<div class="col-1">
 					Year
 				</div>
 			</div>
 
-		{% for book in data %}
-				<a href="{{ url_for('book',isbn=book[0]) }}" style="color:white">
+		{% for i in range(data|length) %}
+				<a href="{{ url_for('book',isbn=data[i][0]) }}" style="color:white">
 				<div class="row" style="background: rgba(138, 114, 61, 0.2); margin-top:20px;">
-					<div class="col-3">
-						{{book[0]}}
+					<div class="col-2">
+						{{data[i][0]}}
 					</div>
 					<div class="col-3">
-						{{book[1]}}
+						{{data[i][1]}}
 					</div>
 					<div class="col-3">
-						{{book[2]}}
+						{{data[i][2]}}
 					</div>
-					<div class="col-3">
-						{{book[3]}}
+					<div class="col-1">
+						{{data[i][3]}}
 					</div>
 				</div>
 				</a>

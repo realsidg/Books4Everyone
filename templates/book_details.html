@@ -6,6 +6,8 @@
     <h6>Author {{book[2]}}</h6>
     <h6>ISBN: {{book[0]}}</h6>
     <h6>Year: {{book[3]}}</h6>
+    <h6>Average Rating (Goodreads): {{ res.json()['books'][0]['average_rating']}}</h6>
+    <br>
 </div>
 
 <div class="container">
@@ -19,7 +21,7 @@
                     <label for="review" class="text-white">Write a Review:</label><br>
                     <textarea name="review" style="width:500px;height:150px;"></textarea> <br>
                     <label for="rating" class="text-white">Rating:</label><br>                
-                    <input type="number" name="rating"><br>
+                    <input type="number" min="1" max="5" step="1" name="rating"><br>
                     <input type="submit" name="submit" class="btn btn-info btn-md" value="submit"><br><br>
             </form>
         {% else %}
