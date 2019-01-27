@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block title %} {{book[1]}} {% endblock %}
 {% block body %}
-<!-- <link href="{{ url_for('static', filename='css/book_details.css') }}" rel="stylesheet" type="text/css"> -->
+<link href="{{ url_for('static', filename='css/book_details.css') }}" rel="stylesheet" type="text/css">
 
 <div class="container" style="background: rgba(138, 114, 61, 0.2); margin-top:20px;">
     <h3>{{book[1]}}</h3>
@@ -14,21 +14,96 @@
 </div>
 
 <div class="container">
-    <center><h4>User Reviews({{l}}):</h4></center>
-    <div class="col-12">
+    <center><h4>User Reviews:</h4></center>
+    
+    <!-- Add icon library -->
+<div class="col-12 bg-light score">
+<span class="heading">User Rating</span><br>
+<div class="star-ratings-css">
+    <div class="star-ratings-css-top" style="width: {{avg[1]}}"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+    <div class="star-ratings-css-bottom"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+  </div><br>
+<p>{{avg[0]}} stars based on {{l}} reviews.</p>
+<hr style="border:3px solid #f1f1f1">
+
+<div class="row">
+  <div class="side">
+    <div>5 star</div>
+  </div>
+  <div class="middle">
+    <div class="bar-container">
+      <div class="bar-5 " style="width: {{scr[5][1]}};"></div>
+    </div>
+  </div>
+  <div class="side right">
+    <div>{{scr[5][0]}}</div>
+  </div>
+  <div class="side">
+    <div>4 star</div>
+  </div>
+  <div class="middle">
+    <div class="bar-container">
+      <div class="bar-4" style="width: {{scr[4][1]}};"></div>
+    </div>
+  </div>
+  <div class="side right">
+    <div>{{scr[4][0]}}</div>
+  </div>
+  <div class="side">
+    <div>3 star</div>
+  </div>
+  <div class="middle">
+    <div class="bar-container">
+      <div class="bar-3" style="width: {{scr[3][1]}};"></div>
+    </div>
+  </div>
+  <div class="side right">
+    <div>{{scr[3][0]}}</div>
+  </div>
+  <div class="side">
+    <div>2 star</div>
+  </div>
+  <div class="middle">
+    <div class="bar-container">
+      <div class="bar-2" style="width: {{scr[2][1]}};"></div>
+    </div>
+  </div>
+  <div class="side right">
+    <div>{{scr[2][0]}}</div>
+  </div>
+  <div class="side">
+    <div>1 star</div>
+  </div>
+  <div class="middle">
+    <div class="bar-container">
+      <div class="bar-1" style="width: {{scr[1][1]}};"></div>
+    </div>
+  </div>
+  <div class="side right">
+    <div>{{scr[1][0]}}</div>
+  </div>
+</div>
+</div><br>
+<div class="col-12">
     {% if "logged_in" in session %}
     {% if session["logged_in"] %}
         {% if usrev == [] %}
             <form action="{{ url_for('book',isbn=book[0])}}" method="POST" class="form">
-                <div class="form-group">
-                    <label for="review" class="text-white">Write a Review:</label><br>
+                <div class="form-group" style="background: rgba(138, 114, 61, 0.2); margin-top:20px;">
+                    <label for="review" class="text-white"><span class="text-danger bg-light">{{error}}</span><br>Write a Review:</label><br>
                     <textarea name="review" style="width:500px;height:150px;"></textarea> <br>
-                    <label for="rating" class="text-white">Rating:</label><br>                
-                    <input type="number" min="1" max="5" step="1" name="rating"><br>
+                    <label for="rate" class="text-white">Rating:</label><br>     
+                    <fieldset class="rating">
+                        <input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+                        <input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+                        <input type="radio" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
+                        <input type="radio" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+                        <input type="radio" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+                    </fieldset><br><br>
                     <input type="submit" name="submit" class="btn btn-info btn-md" value="submit"><br><br>
             </form>
         {% else %}
-        <div class="col-12 bg-primary">
+        <div class="col-12 bg-primary ml-2" >
             <b>You have aldready reviewed this book.</b><br><br>
             <b>Your Review:</b><br>
             {% for i in range(usrev[0][1]) %}<img src="{{url_for('static',filename='svg/star.svg')}}" height="15px">{% endfor %}<br>
@@ -40,6 +115,7 @@
         <span class="text-white">You need to be logged in to review.</span><br><br>
     {% endif %}
     </div>
+<br>
     {% for review in rev %}
         {% if review != usrev[0] %}
             <div class="col-12 bg-light">
@@ -48,5 +124,7 @@
             </div>
         {% endif %}
     {% endfor %}
+    
 </div>
+
 {% endblock %}

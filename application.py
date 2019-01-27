@@ -120,18 +120,34 @@ def login():
 @app.route("/book/<string:isbn>",methods=["GET","POST"])
 def book(isbn):
     book=usrev=[]
+    error=''
     book= db.execute("SELECT * from BOOKS WHERE ISBN = :isbn",{'isbn':isbn}).fetchall()[0]
     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn})
     if "logged_in" in session:
         if session["logged_in"]:
             usrev = db.execute("SELECT username, rating, review from users u, reviews r where isbn = :i and u.id = r.user_id and u.id = :u",{'i':isbn,'u':session["user_no"]}).fetchall()
             if request.method=="POST" and usrev==[]:
-                db.execute("INSERT INTO REVIEWS (isbn, user_id, review, rating) VALUES (:i, :u, :rev, :rate)",
-                            {'i':book[0], 'u':session["user_no"], 'rev':request.form.get("review"), 'rate':request.form.get("rating")})
-                usrev = db.execute("SELECT username, rating, review from users u, reviews r where isbn = :i and u.id = r.user_id and u.id = :u",{'i':isbn,'u':session["user_no"]}).fetchall()
-                db.commit()
+                if not len(request.form.get("review")):
+                    error="Please enter a valid review"
+                elif not request.form.get("rating"):
+                    error="Please enter a valid rating in stars"
+                else:
+                    db.execute("INSERT INTO REVIEWS (isbn, user_id, review, rating) VALUES (:i, :u, :rev, :rate)",
+                                {'i':book[0], 'u':session["user_no"], 'rev':request.form.get("review"), 'rate':request.form.get("rating")})
+                    usrev = db.execute("SELECT username, rating, review from users u, reviews r where isbn = :i and u.id = r.user_id and u.id = :u",{'i':isbn,'u':session["user_no"]}).fetchall()
+                    db.commit()         
     rev = db.execute("SELECT username, rating, review from users u, reviews r where isbn = :i and u.id = r.user_id",{'i':isbn}).fetchall()
     res=res.json()['books'][0]['average_rating']    
     star=str(float(res)*16)+"px"
-    return render_template("book_details.html",book=book,rev=rev,usrev=usrev,res=res,star=star,l=len(rev))
+    scr={1:[0,0],2:[0,0],3:[0,0],4:[0,0],5:[0,0]}
+    avg=0
+    l=len(rev) if len(rev)>0 else 1
+    for i in rev:
+        scr[i[1]][0]+=1
+        avg+=i[1]
+    for i in scr:
+        scr[i][1]=str((scr[i][0]/l)*100)+"%"
+    avg=["{0:.2f}".format(avg/l),str("{0:.2f}".format(avg/l*20))+"px"]
+    print(avg[1])
+    return render_template("book_details.html",book=book,rev=rev,usrev=usrev,res=res,star=star,l=l,error=error,avg=avg, scr=scr)
     
