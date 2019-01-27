@@ -84,7 +84,7 @@ def results():
         # if isbn is not None:
         #     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn})
         #     data=res.json()
-        return render_template("result.html", data=data, error=False)
+        return render_template("result.html", data=data, error=False, q=query)
     else:
         return render_template("result.html", data=data, error=True)
 
@@ -124,10 +124,14 @@ def book(isbn):
     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn})
     if "logged_in" in session:
         if session["logged_in"]:
+            usrev = db.execute("SELECT username, rating, review from users u, reviews r where isbn = :i and u.id = r.user_id and u.id = :u",{'i':isbn,'u':session["user_no"]}).fetchall()
             if request.method=="POST" and usrev==[]:
                 db.execute("INSERT INTO REVIEWS (isbn, user_id, review, rating) VALUES (:i, :u, :rev, :rate)",
                             {'i':book[0], 'u':session["user_no"], 'rev':request.form.get("review"), 'rate':request.form.get("rating")})
-                db.commit()
                 usrev = db.execute("SELECT username, rating, review from users u, reviews r where isbn = :i and u.id = r.user_id and u.id = :u",{'i':isbn,'u':session["user_no"]}).fetchall()
+                db.commit()
     rev = db.execute("SELECT username, rating, review from users u, reviews r where isbn = :i and u.id = r.user_id",{'i':isbn}).fetchall()
-    return render_template("book_details.html",book=book,rev=rev,usrev=usrev,res=res)
+    res=res.json()['books'][0]['average_rating']    
+    star=str(float(res)*16)+"px"
+    return render_template("book_details.html",book=book,rev=rev,usrev=usrev,res=res,star=star,l=len(rev))
+    

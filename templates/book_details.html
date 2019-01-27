@@ -1,23 +1,24 @@
 {% extends "layout.html" %}
+{% block title %} {{book[1]}} {% endblock %}
 {% block body %}
 <!-- <link href="{{ url_for('static', filename='css/book_details.css') }}" rel="stylesheet" type="text/css"> -->
 
 <div class="container" style="background: rgba(138, 114, 61, 0.2); margin-top:20px;">
     <h3>{{book[1]}}</h3>
-    <br>
+    <img src="{{ url_for('static', filename='svg/stars.svg') }}" height="15px" width="80px" style="position:absolute; clip: rect(0px,{{star}},15px,0px);"><br>({{res}} <i>by Goodreads</i>)
+    <br><br>
     <h6>Author {{book[2]}}</h6>
     <h6>ISBN: {{book[0]}}</h6>
     <h6>Year: {{book[3]}}</h6>
-    <h6>Average Rating (Goodreads): {{ res.json()['books'][0]['average_rating']}}</h6>
     <br>
 </div>
 
 <div class="container">
-    <center><h4>Reviews:</h4></center>
+    <center><h4>User Reviews({{l}}):</h4></center>
     <div class="col-12">
     {% if "logged_in" in session %}
-    {% if session["logged_in"]%}
-        {% if usrev == []%}
+    {% if session["logged_in"] %}
+        {% if usrev == [] %}
             <form action="{{ url_for('book',isbn=book[0])}}" method="POST" class="form">
                 <div class="form-group">
                     <label for="review" class="text-white">Write a Review:</label><br>
@@ -29,22 +30,21 @@
         {% else %}
         <div class="col-12 bg-primary">
             <b>You have aldready reviewed this book.</b><br><br>
-            <b>Rating:</b>{{usrev[0][1]}}<br>
-            <b>Review</b><br>
+            <b>Your Review:</b><br>
+            {% for i in range(usrev[0][1]) %}<img src="{{url_for('static',filename='svg/star.svg')}}" height="15px">{% endfor %}<br>
             {{usrev[0][2]}}<br><hr>
             </div>
         {% endif %}
     {% endif %}
     {% else %}
-        You need to be logged in to review.
+        <span class="text-white">You need to be logged in to review.</span><br><br>
     {% endif %}
     </div>
     {% for review in rev %}
         {% if review != usrev[0] %}
             <div class="col-12 bg-light">
-            <b>User:{{review[0]}}</b><br><br>
-            <b>Rating:</b>{{review[1]}}<br>
-            <b>Review</b><br>{{review[2]}}<br><hr>
+            <b>{{review[0]}}</b><br>{% for i in range(review[1]) %}<img src="{{url_for('static',filename='svg/star.svg')}}" height="15px">{% endfor %}<br>
+            <br>{{review[2]}}<br><hr>
             </div>
         {% endif %}
     {% endfor %}
