@@ -8,7 +8,7 @@
     <title>{% block title %}{% endblock %}</title>
     <!-- Bootstrap -->
 	<link href="{{ url_for('static', filename='css/bootstrap-4.0.0.css') }}" rel="stylesheet">
-	<link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet" type="text/css">
+	<link href="{{ url_for('static', filename='css/index.css') }}?1" rel="stylesheet" type="text/css">
   </head>	
   <body>
       <nav class="navbar navbar-expand-lg bg-dark ">
@@ -29,15 +29,17 @@
             </ul>
             <form class="form-inline my-2 my-lg-0" action="{{ url_for('results') }}">
                 <ul class="navbar-nav mr-auto text-white">
-                    {%if not session["logged_in"] %}
+                    {%if not session["logged_in"]%}
                       <li class="nav-item"><a class="nav-link" href="{{ url_for('signup')}}"> Sign Up</a></li>
                       <li class="nav-item"><a class="nav-link" href="{{ url_for('login')}}"> Login</a></li>
                     {% else %}
                       <li class="nav-item"><a class="nav-link" href="{{ url_for('index',logout=True)}}"> Logout</a></li>
                     {% endif %}
                   </ul>
+              {% if request.path != '/' %}
               <input name="q" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+              {% endif %}
             </form>
           </div>
         </nav>

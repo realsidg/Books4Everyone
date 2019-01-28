@@ -2,6 +2,7 @@ import os
 import requests
 import re
 import hashlib
+import random
 
 from flask import Flask, session, render_template, request
 from flask_session import Session
@@ -71,7 +72,7 @@ def index():
             session.pop('logged_in', False)
             session.pop('user', None)
             session.pop('user_no', None)
-            
+    
     return render_template("index.html")
 
 @app.route("/results")
@@ -79,12 +80,21 @@ def results():
     data=[]
     query=request.args.get('q')
     if query:
+        srt=request.args.get('sort')
+        if not srt: srt="title"
+        page=int(request.args.get('page')) if request.args.get('page') else 1 
         regex=".*"+query+".*"
-        data = db.execute("SELECT * from BOOKS where (title ~* :rgx) or (author ~* :rgx) or (isbn ~* :rgx)  or (CAST(year AS TEXT) ~* :rgx);",{'rgx':regex}).fetchall()
-        # if isbn is not None:
-        #     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn})
-        #     data=res.json()
-        return render_template("result.html", data=data, error=False, q=query)
+        data = db.execute(f"SELECT * from BOOKS where (title ~* :rgx) or (author ~* :rgx) or (isbn ~* :rgx)  or (CAST(year AS TEXT) ~* :rgx) ORDER BY {srt} ASC;"
+                ,{'rgx':regex}).fetchall()
+        pages=1
+        lpage=0
+        if len(data)>15:
+            pages, lpage=divmod(len(data),15)
+            if lpage!=0: pages=pages+1 
+        
+        data=data[(page-1)*15:page*15-1] if pages!=page else data[(page-1)*15:(page-1)*15+lpage-1]
+
+        return render_template("result.html", data=data, error=False, q=query,page=page,pages=pages,sort=srt)
     else:
         return render_template("result.html", data=data, error=True)
 
@@ -119,12 +129,17 @@ def login():
 
 @app.route("/book/<string:isbn>",methods=["GET","POST"])
 def book(isbn):
+    remove=request.args.get('remove') if request.args.get('remove') else False
     book=usrev=[]
     error=''
     book= db.execute("SELECT * from BOOKS WHERE ISBN = :isbn",{'isbn':isbn}).fetchall()[0]
     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn})
     if "logged_in" in session:
         if session["logged_in"]:
+            if remove:
+                usrev = db.execute("DELETE from reviews r where isbn = :i and user_id = :u",{'i':isbn,'u':session["user_no"]})
+                db.commit()
+
             usrev = db.execute("SELECT username, rating, review from users u, reviews r where isbn = :i and u.id = r.user_id and u.id = :u",{'i':isbn,'u':session["user_no"]}).fetchall()
             if request.method=="POST" and usrev==[]:
                 if not len(request.form.get("review")):

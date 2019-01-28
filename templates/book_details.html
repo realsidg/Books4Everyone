@@ -103,11 +103,12 @@
                     <input type="submit" name="submit" class="btn btn-info btn-md" value="submit"><br><br>
             </form>
         {% else %}
-        <div class="col-12 bg-primary ml-2" >
+        <div class="col-12 bg-info ml-2" >
             <b>You have aldready reviewed this book.</b><br><br>
             <b>Your Review:</b><br>
             {% for i in range(usrev[0][1]) %}<img src="{{url_for('static',filename='svg/star.svg')}}" height="15px">{% endfor %}<br>
-            {{usrev[0][2]}}<br><hr>
+            {{usrev[0][2]}}<br>
+            <a href="{{ url_for('book',isbn=book[0],remove=True) }}" class="text-white"><i>Click here to delete your review</i></a><hr>
             </div>
         {% endif %}
     {% endif %}

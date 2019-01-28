@@ -3,13 +3,13 @@
 {% block title %} Books4everyone {% endblock %}
 {% block body %}
 	<div class="container">
-				<div class="col-xl-12 text-center text-white"><br><br><h1>Welcome {{session["user"]}}<br> Which book do you want to find?</h1><br>
+				<div class="col-xl-12 text-center text-white"><br><h1> Which book do you want to find?</h1><br>
 					<h4>(Enter book name, author, isbn or year)</h4><br><br></div>
 			
 				<div class="col-xl-12 text-center">
 				<form action="{{ url_for('results') }}">
-				<input type="text" class="search" name="q">&nbsp;&nbsp;
-					<button class="bg-light">Submit</button>
+				<input type="text" class="form-control" name="q"><br>
+					<button class="btn btn-primary">Submit</button>
 				</form>
 				</div>		  
 			</div>
