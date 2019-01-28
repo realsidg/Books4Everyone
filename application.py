@@ -149,5 +149,6 @@ def book(isbn):
         scr[i][1]=str((scr[i][0]/l)*100)+"%"
     avg=["{0:.2f}".format(avg/l),str("{0:.2f}".format(avg/l*20))+"px"]
     print(avg[1])
+    l=len(rev)
     return render_template("book_details.html",book=book,rev=rev,usrev=usrev,res=res,star=star,l=l,error=error,avg=avg, scr=scr)
     

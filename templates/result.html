@@ -4,10 +4,11 @@
 {%block body%}
 
 <div class="container" style="padding: 10px">
-
 {%if error%}
 	Please enter a query
 {% else %}
+	<h2> Search results for '{{q}}':</h2><br>
+
 	{% if data==[] %}
 		No results found
 	{% else %}
