@@ -175,7 +175,7 @@ def book_api(isbn):
     try:
         book = db.execute("SELECT title, author, year from BOOKS WHERE isbn=:isbn",{"isbn":isbn}).fetchall()[0]
     except:
-        return jsonify({"error": "Invalid ISBN"}), 422
+        return jsonify({"error": "Invalid ISBN"}), 404
 
     res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn})
     res=res.json()['books'][0]
