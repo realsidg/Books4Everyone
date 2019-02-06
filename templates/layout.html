@@ -8,16 +8,16 @@
     <title>{% block title %}{% endblock %}</title>
     <!-- Bootstrap -->
 	<link href="{{ url_for('static', filename='css/bootstrap-4.0.0.css') }}" rel="stylesheet">
-	<link href="{{ url_for('static', filename='css/index.css') }}?1" rel="stylesheet" type="text/css">
+	<link href="{{ url_for('static', filename='css/index.css') }}?3sad1" rel="stylesheet" type="text/css">
   </head>	
   <body>
-      <nav class="navbar navbar-expand-lg bg-dark ">
+      <nav class="navbar navbar-expand-lg bg-dark">
           <a class="navbar-brand" href="{{ url_for('index')}}">
               <img src="{{ url_for('static', filename='svg/logo.svg')}}" width="30" height="30" alt="">
             </a>
           <a class="navbar-brand text-info" href="{{ url_for('index')}}">B4E</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon bg-secondary"></span>
+          <button class="navbar-toggler bg-primary" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
           </button>
         
           <div class="collapse navbar-collapse text-white" id="navbarSupportedContent">

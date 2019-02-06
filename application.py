@@ -4,7 +4,7 @@ import re
 import hashlib
 import random
 
-from flask import Flask, session, render_template, request
+from flask import Flask, session, render_template, request, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -42,6 +42,7 @@ def Validate(name, email, user, passw, repeatpass):
     if check and not (re.match("^[a-zA-z0-9_]*$",user)):
         check=False
         message="Invalid Username"
+        
     else:
         for u in db.execute("SELECT username from USERS").fetchall():
             if re.match(u[0],user,re.I):
@@ -51,6 +52,8 @@ def Validate(name, email, user, passw, repeatpass):
     if check and not (re.match("^[A-Za-z0-9@#$%^&+=]{8,}$",passw)):
         check=False
         message="Invalid Password"
+        if len(passw)<8: message+=" (Minimum 8 charachters)"
+        else: message+=" (only alphabets, numbers and @#$%^&+=] are allowed)"
 
     if check and not  passw==repeatpass:
         check=False
@@ -87,12 +90,13 @@ def results():
         data = db.execute(f"SELECT * from BOOKS where (title ~* :rgx) or (author ~* :rgx) or (isbn ~* :rgx)  or (CAST(year AS TEXT) ~* :rgx) ORDER BY {srt} ASC;"
                 ,{'rgx':regex}).fetchall()
         pages=1
-        lpage=0
+        lpage=len(data)
         if len(data)>15:
             pages, lpage=divmod(len(data),15)
             if lpage!=0: pages=pages+1 
-        
-        data=data[(page-1)*15:page*15-1] if pages!=page else data[(page-1)*15:(page-1)*15+lpage-1]
+            else: lpage=15
+
+        data=data[(page-1)*15:page*15] if pages!=page else data[(page-1)*15:(page-1)*15+lpage]
 
         return render_template("result.html", data=data, error=False, q=query,page=page,pages=pages,sort=srt)
     else:
@@ -163,7 +167,24 @@ def book(isbn):
     for i in scr:
         scr[i][1]=str((scr[i][0]/l)*100)+"%"
     avg=["{0:.2f}".format(avg/l),str("{0:.2f}".format(avg/l*20))+"px"]
-    print(avg[1])
     l=len(rev)
     return render_template("book_details.html",book=book,rev=rev,usrev=usrev,res=res,star=star,l=l,error=error,avg=avg, scr=scr)
     
+@app.route("/api/<string:isbn>")
+def book_api(isbn):
+    try:
+        book = db.execute("SELECT title, author, year from BOOKS WHERE isbn=:isbn",{"isbn":isbn}).fetchall()[0]
+    except:
+        return jsonify({"error": "Invalid ISBN"}), 422
+
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "fcJPItrdhaNf8KQuAd1bQ", "isbns": isbn})
+    res=res.json()['books'][0]
+
+    return jsonify({
+        "title": book[0],
+        "author": book[1],
+        "year": book[2],
+        "isbn": isbn,
+        "review_count": res['reviews_count'],
+        "average_score": res['average_rating']
+    })

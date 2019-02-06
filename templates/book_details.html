@@ -104,7 +104,7 @@
             </form>
         {% else %}
         <div class="col-12 bg-info ml-2" >
-            <b>You have aldready reviewed this book.</b><br><br>
+            <b>You have already reviewed this book.</b><br><br>
             <b>Your Review:</b><br>
             {% for i in range(usrev[0][1]) %}<img src="{{url_for('static',filename='svg/star.svg')}}" height="15px">{% endfor %}<br>
             {{usrev[0][2]}}<br>

@@ -1,13 +1,11 @@
 @import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css);
 
 fieldset, label { margin: 0; padding: 0; }
-/* body{ margin: 20px; } */
 h1 { font-size: 1.5em; margin: 10px; }
 
-/****** Style Star Rating Widget *****/
 .score {
-  margin: 0 auto; /* Center website */
-  max-width: 800px; /* Max width */
+  margin: 0 auto; 
+  max-width: 800px;
   padding: 20px;
 }
 .rating { 
@@ -34,15 +32,13 @@ h1 { font-size: 1.5em; margin: 10px; }
  float: right; 
 }
 
-/***** CSS Magic to Highlight Stars on Hover *****/
+.rating > input:checked ~ label, 
+.rating:not(:checked) > label:hover, 
+.rating:not(:checked) > label:hover ~ label { color: #FFD700;  } 
 
-.rating > input:checked ~ label, /* show gold star when clicked */
-.rating:not(:checked) > label:hover, /* hover current star */
-.rating:not(:checked) > label:hover ~ label { color: #FFD700;  } /* hover previous stars in list */
-
-.rating > input:checked + label:hover, /* hover current star when changing rating */
+.rating > input:checked + label:hover, 
 .rating > input:checked ~ label:hover,
-.rating > label:hover ~ input:checked ~ label, /* lighten current selection */
+.rating > label:hover ~ input:checked ~ label, 
 .rating > input:checked ~ label:hover ~ label { color: #FFED85;  } 
 
 .heading {
