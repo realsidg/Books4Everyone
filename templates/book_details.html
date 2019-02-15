@@ -89,7 +89,7 @@
     {% if session["logged_in"] %}
         {% if usrev == [] %}
             <form action="{{ url_for('book',isbn=book[0])}}" method="POST" class="form">
-                <div class="form-group" style="background: rgba(138, 114, 61, 0.2); margin-top:20px;">
+                <div class="form-group" style="background: rgba(138, 114, 61, 0.2); margin-top:20px;padding:20px">
                     <label for="review" class="text-white"><span class="text-danger bg-light">{{error}}</span><br>Write a Review:</label><br>
                     <textarea name="review" style="width:500px;height:150px;"></textarea> <br>
                     <label for="rate" class="text-white">Rating:</label><br>     
