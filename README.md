@@ -5,16 +5,16 @@ This is a book review website. Users are able to register for your website and t
 ## Features of the Web Application 
 
 ### Registration: 
-Users are be able to register for your website, providing (at minimum) a username and password.
+Users can register on your website, providing (at minimum) a username and password.
 
 ### Login: 
-Users, once registered, are be able to log in to your website with their username and password.
+Users, once registered, can log in to your website with their username and password.
 
 ### Logout: 
 Logged in users are be able to log out of the site.
 
 ### Search: 
-Once a user has logged in, they are be taken to a page where they can search for a book. Users are be able to type in the ISBN number of a book, the title of a book, or the author of a book. After performing the search, your website should display a list of possible matching results, or some sort of message if there were no matches. If the user typed in only part of a title, ISBN, or author name, your search page can find matches for those as well!
+Post log in, the users is directed to a page where they can search for a book. Users can type the ISBN number of a book, the title of a book, or the author of a book. After performing the search, your website should display a list of possible matching results, or some sort of message if there were no matches. If the user typed in only part of a title, ISBN, or author name, your search page can find matches for those as well!
 
 ### Book Page: 
 When users click on a book from the results of the search page, they are be taken to a book page, with details about the book: its title, author, publication year, ISBN number, and any reviews that users have left for the book on your website.
